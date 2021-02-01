@@ -1,0 +1,100 @@
+:root {
+  --jumbotron-padding-y: 3rem;
+}
+
+.jumbotron {
+  padding-top: var(--jumbotron-padding-y);
+  padding-bottom: var(--jumbotron-padding-y);
+  margin-bottom: 0;
+  background-color: #fff;
+}
+@media (min-width: 768px) {
+  .jumbotron {
+    padding-top: calc(var(--jumbotron-padding-y) * 2);
+    padding-bottom: calc(var(--jumbotron-padding-y) * 2);
+  }
+}
+
+.jumbotron p:last-child {
+  margin-bottom: 0;
+}
+
+.jumbotron-heading {
+  font-weight: 300;
+}
+
+.jumbotron .container {
+  max-width: 40rem;
+}
+
+footer {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+footer p {
+  margin-bottom: .25rem;
+}
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+svg{
+  fill:red;
+}
+
+svg:hover{
+  fill:aqua;
+}
+
+#loading {
+  width: 2rem;
+  height: 2rem;
+  border: 5px solid #f3f3f3;
+  border-top: 6px solid red;
+  border-radius: 100%;
+  margin: auto;
+  visibility: hidden;
+  animation: spin 1s infinite linear;
+}
+
+#loading.display {
+  visibility: visible;
+}
+
+@keyframes spin {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+#app {
+  margin: auto;
+  width: 100%; 
+  height: 450px; 
+  overflow: auto; 
+  text-align:justify; 
+}
+
+#navbar{
+  overflow: hidden;
+  background-color: #333;
+}
+
+/* The sticky class is added to the navbar with JS when it reaches its scroll position */
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + .content {
+  padding-top: 60px;
+}
+
+.jumbotron {
+  margin-top: 100px;
+}
