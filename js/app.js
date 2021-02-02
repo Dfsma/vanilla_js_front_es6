@@ -13,12 +13,22 @@ let cart = {
 
 }
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchProducts()
+    if(localStorage.getItem('cart')){
+        cart = JSON.parse(localStorage.getItem('cart'))
+        displayCart()
+    }
 })
 
 cards.addEventListener('click', e => {
     addCart(e)
+})
+
+items.addEventListener('click', e => {
+    btnAction(e)
 })
 
 const fetchProducts = async () => {
@@ -74,8 +84,8 @@ const displayCart = () => {
         templateCart.querySelector('th').textContent = product.id
         templateCart.querySelectorAll('td')[0].textContent = product.name
         templateCart.querySelectorAll('td')[1].textContent = product.cant
-        templateCart.querySelector('.btn-add').dataset.id = product.id
-        templateCart.querySelector('.btn-minus').dataset.id = product.id
+        templateCart.querySelector('.btn-info').dataset.id = product.id
+        templateCart.querySelector('.btn-danger').dataset.id = product.id
         templateCart.querySelector('span').textContent = product.cant * product.price
     
         const clone = templateCart.cloneNode(true)
@@ -83,6 +93,8 @@ const displayCart = () => {
     })
     itemsCart.appendChild(fragment)
     displayCartFooter()
+
+    localStorage.setItem('cart', JSON.stringify(cart))
 }
 
 const displayCartFooter = () => {
@@ -122,4 +134,22 @@ const displayTotalCantNav = (totalCant) => {
 }
 
 
-//MINUTO 1:03:52 VIDEO
+const btnAction = e => {
+
+    // accion de aumentar producto
+    if(e.target.classList.contains('btn-info')) {
+        const product = cart[e.target.dataset.id]
+        product.cant++
+        cart[e.target.dataset.id] = {...product}
+        displayCart();
+    }else if(e.target.classList.contains('btn-danger')){
+        const product = cart[e.target.dataset.id]
+        product.cant--
+        if(product.cant === 0){
+            delete cart[e.target.dataset.id]
+        }
+        displayCart();
+    }
+
+    e.stopPropagation()
+}
