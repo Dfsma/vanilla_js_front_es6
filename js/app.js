@@ -1,6 +1,7 @@
 
 const productsUrl = 'http://localhost:3000/products';
 const cards = document.getElementById('cards')
+const totalCantNav = document.getElementById('total-count')
 const itemsCart = document.getElementById('items')
 const footerCart = document.getElementById('footer-cart')
 const templateCard = document.getElementById('template-card').content
@@ -87,10 +88,10 @@ const displayCart = () => {
 const displayCartFooter = () => {
     footerCart.innerHTML = ''
     if(Object.keys(cart).length === 0){
-        footerCart.innerHTML = `
+        return footerCart.innerHTML = `
         <th scope="row" colspan="5">Carrito vacío con innerHTML</th>
         `
-        return
+        
     }
 
     const totalCant = Object.values(cart).reduce((acc, {cant}) => acc + cant , 0)
@@ -98,6 +99,8 @@ const displayCartFooter = () => {
     
     templateFooter.querySelectorAll('td')[0].textContent = totalCant
     templateFooter.querySelector('span').textContent = totalPrice
+
+    displayTotalCantNav(totalCant);
 
     const clone = templateFooter.cloneNode(true)
     fragment.append(clone)
@@ -108,9 +111,14 @@ const displayCartFooter = () => {
     btnCleanCart.addEventListener('click', () => {
         cart = {}
         displayCart();
+        displayTotalCantNav();
     })
 
 
+}
+
+const displayTotalCantNav = (totalCant) => {
+    totalCantNav.textContent = totalCant;
 }
 
 
