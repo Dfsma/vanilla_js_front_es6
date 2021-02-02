@@ -90,7 +90,7 @@ const displayCartFooter = () => {
         footerCart.innerHTML = `
         <th scope="row" colspan="5">Carrito vacío con innerHTML</th>
         `
-        
+        return
     }
 
     const totalCant = Object.values(cart).reduce((acc, {cant}) => acc + cant , 0)
@@ -103,6 +103,13 @@ const displayCartFooter = () => {
     fragment.append(clone)
 
     footerCart.appendChild(fragment)
+
+    const btnCleanCart = document.getElementById('clean-cart')
+    btnCleanCart.addEventListener('click', () => {
+        cart = {}
+        displayCart();
+    })
+
 
 }
 
