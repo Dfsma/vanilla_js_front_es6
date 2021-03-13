@@ -1,155 +1,269 @@
+const baseUrl = "https://bsale-test-cl.herokuapp.com/api/v1/";
+const productsUrl = "https://bsale-test-cl.herokuapp.com/api/v1/products/";
+const categoriesUrl = "https://bsale-test-cl.herokuapp.com/api/v1/categories";
 
-const productsUrl = 'http://localhost:3000/products';
-const cards = document.getElementById('cards')
-const totalCantNav = document.getElementById('total-count')
-const itemsCart = document.getElementById('items')
-const footerCart = document.getElementById('footer-cart')
-const templateCard = document.getElementById('template-card').content
-const templateCart = document.getElementById('template-cart').content
-const templateFooter = document.getElementById('template-footer').content
-const fragment = document.createDocumentFragment()
+const cards = document.getElementById("cards");
+const totalCantNav = document.getElementById("total-count");
+const itemsCart = document.getElementById("items");
+const footerCart = document.getElementById("footer-cart");
+const templateCard = document.getElementById("template-card").content;
+const templateCart = document.getElementById("template-cart").content;
+const templateFooter = document.getElementById("template-footer").content;
+const categoriesDropDown = document.getElementById("categoryDropDown");
+const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
+const allSubmit = document.getElementById("all-submit");
 
-let cart = {
-
-}
+let liElements = document.getElementById("nav-pagination") 
 
 
+const fragment = document.createDocumentFragment();
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchProducts()
-    if(localStorage.getItem('cart')){
-        cart = JSON.parse(localStorage.getItem('cart'))
-        displayCart()
-    }
-})
+let cart = {};
 
-cards.addEventListener('click', e => {
-    addCart(e)
-})
+document.addEventListener("DOMContentLoaded", () => {
+  fetchProducts();
+  fetchCategories();
+  
 
-items.addEventListener('click', e => {
-    btnAction(e)
-})
+  if (localStorage.getItem("cart")) {
+    cart = JSON.parse(localStorage.getItem("cart"));
+    displayCart();
+  }
+});
+
+liElements.addEventListener("click", (e) => {
+    paginaSeleccionada = e.target.innerText;
+    fetchProductsByPagination(paginaSeleccionada);
+  });
+
+allSubmit.addEventListener("click", (e) => {
+  clear();
+  fetchProducts();
+});
+
+searchInput.addEventListener("change", (e) => {
+  const query = searchInput.value;
+  fetchProductsBySearchParam(query);
+});
+
+categoriesDropDown.addEventListener("change", (e) => {
+  fetchProductsByCategory(e.target.value);
+});
+
+cards.addEventListener("click", (e) => {
+  addCart(e);
+});
+
+items.addEventListener("click", (e) => {
+  btnAction(e);
+});
 
 const fetchProducts = async () => {
-    try {
-        const response = await fetch(productsUrl)
-        const data = await response.json();
-        displayCard(data)
-    } catch (error) {
-        console.log(error)
-    }
-}
+  try {
+    const response = await fetch(productsUrl);
+    const data = await response.json();
+    displayCard(data);
+    displayPagination(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fetchCategories = async () => {
+  try {
+    const response = await fetch(categoriesUrl);
+    const data = await response.json();
+    displayCategories(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fetchProductsBySearchParam = async (query) => {
+  try {
+    const response = await fetch(baseUrl + `/searchs?query=${query}`);
+    const data = await response.json();
+    clear();
+    displayCard(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fetchProductsByCategory = async (selectedOption) => {
+  try {
+    const response = await fetch(categoriesUrl + `/${selectedOption}`);
+    const data = await response.json();
+    clear();
+    displayCard(data);
+    //displayCard(data.products);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fetchProductsByPagination = async (page) => {
+  try {
+    const response = await fetch(productsUrl + `/page` + `/${page}`);
+    const data = await response.json();
+    clear();
+    displayCard(data);
+    //displayCard(data.products);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const displayCategories = (data) => {
+  const html = data.data
+    .map((categoria) => {
+      return `
+            <option id="category" value="${categoria.id}">${categoria.name}</option>
+        `;
+    })
+    .join("");
+  document
+    .querySelector("#categoryDropDown")
+    .insertAdjacentHTML("beforeend", html);
+};
+
+const displayPagination = (data) => {
+
+  const totalPageCount = Math.ceil(data.data.length / 4);
+  let numbers = [];
+
+  for (let index = 1; index < totalPageCount; index++) {
+    numbers.push(index);
+  }
+
+  const html = numbers
+    .map((number) => {
+      return `  
+        <li  id="page-items" class="page-item" >        
+            <a  id="page-links" class="page-link" href="#" value=${number}>${number}</a>            
+        </li>      
+        
+        `;
+    })
+    .join("");
+  document.querySelector("#pagination").innerHTML = html;
+
+};
+
 
 const displayCard = (data) => {
-    
-    data.data.map(producto => {
-       templateCard.querySelector('h5').textContent = producto.attributes.name
-       templateCard.querySelector('p').textContent = producto.attributes.price
-       templateCard.querySelector('img').setAttribute('src', 'http://superprosamui.com/2016/wp-content/plugins/ap_background/images/default/default_1.png')
-       templateCard.querySelector('.btn-outline-dark').dataset.id = producto.id
-       const clone = templateCard.cloneNode(true)
-       fragment.appendChild(clone)
-    })
-    cards.appendChild(fragment)
-}
+  data.data.map((producto) => {
+    templateCard.querySelector("h5").textContent = producto.name;
+    templateCard.querySelector("p").textContent = producto.price;
+    templateCard.querySelector("img").setAttribute("src", producto.url_image);
+    templateCard.querySelector(".btn-outline-dark").dataset.id = producto.id;
+    const clone = templateCard.cloneNode(true);
+    fragment.appendChild(clone);
+  });
+  cards.appendChild(fragment);
+};
 
-const addCart = e => {
-   
-    if (e.target.classList.contains('btn-outline-dark')) {
-        
-        setCart(e.target.parentElement)
-    }
-    e.stopPropagation()
-}
+const addCart = (e) => {
+  if (e.target.classList.contains("btn-outline-dark")) {
+    setCart(e.target.parentElement);
+  }
+  e.stopPropagation();
+};
 
-const setCart = obj => {
-    const product = {
-        id: obj.querySelector('.btn-outline-dark').dataset.id,
-        name: obj.querySelector('h5').textContent,
-        price: obj.querySelector('p').textContent,
-        cant: 1
-    }
-    if(cart.hasOwnProperty(product.id)){
-        product.cant = cart[product.id].cant + 1
-    }
+const setCart = (obj) => {
+  const product = {
+    id: obj.querySelector(".btn-outline-dark").dataset.id,
+    name: obj.querySelector("h5").textContent,
+    price: obj.querySelector("p").textContent,
+    cant: 1,
+  };
+  if (cart.hasOwnProperty(product.id)) {
+    product.cant = cart[product.id].cant + 1;
+  }
 
-    cart[product.id] = {...product}
-    displayCart()
-}
+  cart[product.id] = { ...product };
+  displayCart();
+};
 
 const displayCart = () => {
-    itemsCart.innerHTML = ''
-    Object.values(cart).forEach(product =>{
-        templateCart.querySelector('th').textContent = product.id
-        templateCart.querySelectorAll('td')[0].textContent = product.name
-        templateCart.querySelectorAll('td')[1].textContent = product.cant
-        templateCart.querySelector('.btn-info').dataset.id = product.id
-        templateCart.querySelector('.btn-danger').dataset.id = product.id
-        templateCart.querySelector('span').textContent = product.cant * product.price
-    
-        const clone = templateCart.cloneNode(true)
-        fragment.appendChild(clone)
-    })
-    itemsCart.appendChild(fragment)
-    displayCartFooter()
+  itemsCart.innerHTML = "";
+  Object.values(cart).forEach((product) => {
+    templateCart.querySelector("th").textContent = product.id;
+    templateCart.querySelectorAll("td")[0].textContent = product.name;
+    templateCart.querySelectorAll("td")[1].textContent = product.cant;
+    templateCart.querySelector(".btn-info").dataset.id = product.id;
+    templateCart.querySelector(".btn-danger").dataset.id = product.id;
+    templateCart.querySelector("span").textContent =
+      product.cant * product.price;
 
-    localStorage.setItem('cart', JSON.stringify(cart))
-}
+    const clone = templateCart.cloneNode(true);
+    fragment.appendChild(clone);
+  });
+  itemsCart.appendChild(fragment);
+  displayCartFooter();
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
 
 const displayCartFooter = () => {
-    footerCart.innerHTML = ''
-    if(Object.keys(cart).length === 0){
-        return footerCart.innerHTML = `
+  footerCart.innerHTML = "";
+  if (Object.keys(cart).length === 0) {
+    return (footerCart.innerHTML = `
         <th scope="row" colspan="5">Carrito vacío con innerHTML</th>
-        `
-        
-    }
+        `);
+  }
 
-    const totalCant = Object.values(cart).reduce((acc, {cant}) => acc + cant , 0)
-    const totalPrice = Object.values(cart).reduce((acc, {cant, price}) => acc + cant * price, 0)
-    
-    templateFooter.querySelectorAll('td')[0].textContent = totalCant
-    templateFooter.querySelector('span').textContent = totalPrice
+  const totalCant = Object.values(cart).reduce(
+    (acc, { cant }) => acc + cant,
+    0
+  );
+  const totalPrice = Object.values(cart).reduce(
+    (acc, { cant, price }) => acc + cant * price,
+    0
+  );
 
-    displayTotalCantNav(totalCant);
+  templateFooter.querySelectorAll("td")[0].textContent = totalCant;
+  templateFooter.querySelector("span").textContent = totalPrice;
 
-    const clone = templateFooter.cloneNode(true)
-    fragment.append(clone)
+  displayTotalCantNav(totalCant);
 
-    footerCart.appendChild(fragment)
+  const clone = templateFooter.cloneNode(true);
+  fragment.append(clone);
 
-    const btnCleanCart = document.getElementById('clean-cart')
-    btnCleanCart.addEventListener('click', () => {
-        cart = {}
-        displayCart();
-        displayTotalCantNav();
-    })
+  footerCart.appendChild(fragment);
 
-
-}
+  const btnCleanCart = document.getElementById("clean-cart");
+  btnCleanCart.addEventListener("click", () => {
+    cart = {};
+    displayCart();
+    displayTotalCantNav();
+  });
+};
 
 const displayTotalCantNav = (totalCant) => {
-    totalCantNav.textContent = totalCant;
-}
+  totalCantNav.textContent = totalCant;
+};
 
-
-const btnAction = e => {
-
-    // accion de aumentar producto
-    if(e.target.classList.contains('btn-info')) {
-        const product = cart[e.target.dataset.id]
-        product.cant++
-        cart[e.target.dataset.id] = {...product}
-        displayCart();
-    }else if(e.target.classList.contains('btn-danger')){
-        const product = cart[e.target.dataset.id]
-        product.cant--
-        if(product.cant === 0){
-            delete cart[e.target.dataset.id]
-        }
-        displayCart();
+const btnAction = (e) => {
+  // accion de aumentar producto
+  if (e.target.classList.contains("btn-info")) {
+    const product = cart[e.target.dataset.id];
+    product.cant++;
+    cart[e.target.dataset.id] = { ...product };
+    displayCart();
+  } else if (e.target.classList.contains("btn-danger")) {
+    const product = cart[e.target.dataset.id];
+    product.cant--;
+    if (product.cant === 0) {
+      delete cart[e.target.dataset.id];
     }
+    displayCart();
+  }
 
-    e.stopPropagation()
-}
+  e.stopPropagation();
+};
+
+const clear = () => {
+  cards.innerHTML = "";
+};

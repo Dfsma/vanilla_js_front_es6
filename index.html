@@ -21,7 +21,7 @@
 </head>
 
 <body>
-    <div class="navbar navbar-dark bg-dark box-shadow">
+    <div class="navbar sticky-top navbar-dark bg-dark box-shadow">
         <div class="container d-flex justify-content-between">
             <a href="#" class="navbar-brand d-flex align-items-center">
                 <svg background-color="red" height="30" viewBox="0 0 340 284" width="30"
@@ -57,16 +57,27 @@
                     <option value="" disabled selected>Seleccione una categoria...</option>
                 </select>
 
-                <form class="form-inline mt-4 ">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre..."
+                <div class=" mt-4 ">
+                    <input id="search-input"class="form-control mr-sm-2" type="search" placeholder="Buscar por nombre/precio y presionar tecla enter"
                         aria-label="Search">
-                    <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Buscar</button>
-                </form>
-                <button id="all-submit" class="btn btn-outline-info  mt-3" type="submit">All Products</button>
+                    
+                </div>
+                <button id="all-submit" class="btn btn-outline-info  mt-3">Borrar Filtros</button>
             </div>
+
+
+            <nav id="nav-pagination" aria-label="Page navigation example" class="mt-3">
+                <ul id="pagination" class="pagination" data-role="select-a">
+                  
+                      
+        
+                  
+                </ul>
+            </nav>
             <div id="cards" class="row">
 
             </div>
+            
         </div>
 
         <footer class="text-muted">
@@ -155,7 +166,7 @@
             </div>
         </template>
 
-        <script src="./js/app.js"></script>
+        <script type="text/javascript" src="./js/app.js"></script>
 </body>
 
 </html>
