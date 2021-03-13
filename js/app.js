@@ -1,7 +1,10 @@
+// Inicio urls apis //
 const baseUrl = "https://bsale-test-cl.herokuapp.com/api/v1/";
 const productsUrl = "https://bsale-test-cl.herokuapp.com/api/v1/products/";
 const categoriesUrl = "https://bsale-test-cl.herokuapp.com/api/v1/categories";
+// Inicio urls apis //
 
+// Inicio de la obtencion de elementos html para obtener su valores //
 const cards = document.getElementById("cards");
 const totalCantNav = document.getElementById("total-count");
 const itemsCart = document.getElementById("items");
@@ -13,8 +16,8 @@ const categoriesDropDown = document.getElementById("categoryDropDown");
 const searchInput = document.getElementById("search-input");
 const searchBtn = document.getElementById("search-btn");
 const allSubmit = document.getElementById("all-submit");
-
-let liElements = document.getElementById("nav-pagination") 
+let liElements = document.getElementById("nav-pagination");
+// Fin de la obtencion de elementos html para obtener su valores // 
 
 
 const fragment = document.createDocumentFragment();
@@ -109,7 +112,6 @@ const fetchProductsByPagination = async (page) => {
     const data = await response.json();
     clear();
     displayCard(data);
-    //displayCard(data.products);
   } catch (error) {
     console.log(error);
   }
