@@ -141,7 +141,7 @@ const displayPagination = (data) => {
     .map((number) => {
       return `  
         <li  id="page-items" class="page-item" >        
-            <a  id="page-links" class="page-link" href="#" value=${number}>${number}</a>            
+            <a  id="page-links" class="page-link"  value=${number}>${number}</a>            
         </li>      
         
         `;
