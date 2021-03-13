@@ -17,6 +17,8 @@ const searchInput = document.getElementById("search-input");
 const searchBtn = document.getElementById("search-btn");
 const allSubmit = document.getElementById("all-submit");
 let liElements = document.getElementById("nav-pagination");
+const loader = document.querySelector("#loading");
+const loadingDiv = document.getElementById('loading');
 // Fin de la obtencion de elementos html para obtener su valores // 
 
 
@@ -25,6 +27,7 @@ const fragment = document.createDocumentFragment();
 let cart = {};
 
 document.addEventListener("DOMContentLoaded", () => {
+
   fetchProducts();
   fetchCategories();
   
@@ -62,56 +65,90 @@ items.addEventListener("click", (e) => {
   btnAction(e);
 });
 
+
+const showSpinner = () => {
+  loadingDiv.style.visibility = 'visible';
+}
+const hideSpinner = () => {
+  loadingDiv.style.visibility = 'hidden';
+}
+
+
+
 const fetchProducts = async () => {
+  showSpinner();
   try {
     const response = await fetch(productsUrl);
     const data = await response.json();
-    displayCard(data);
-    displayPagination(data);
+    if(data){
+      displayCard(data);
+      displayPagination(data);
+      
+    }
+    hideSpinner();
+    
+    
   } catch (error) {
     console.log(error);
   }
+  
 };
 
 const fetchCategories = async () => {
+  showSpinner();
   try {
     const response = await fetch(categoriesUrl);
     const data = await response.json();
-    displayCategories(data);
+    if(data){
+      displayCategories(data);
+    }
+    hideSpinner();
+    
   } catch (error) {
     console.log(error);
   }
 };
 
 const fetchProductsBySearchParam = async (query) => {
+  showSpinner();
   try {
     const response = await fetch(baseUrl + `/searchs?query=${query}`);
     const data = await response.json();
     clear();
-    displayCard(data);
+    if(data){
+      displayCard(data);
+    }
+    hideSpinner();
   } catch (error) {
     console.log(error);
   }
 };
 
 const fetchProductsByCategory = async (selectedOption) => {
+  showSpinner();
   try {
     const response = await fetch(categoriesUrl + `/${selectedOption}`);
     const data = await response.json();
     clear();
-    displayCard(data);
-    //displayCard(data.products);
+    if(data){
+      displayCard(data);
+    }
+    hideSpinner();
   } catch (error) {
     console.log(error);
   }
 };
 
 const fetchProductsByPagination = async (page) => {
+  showSpinner();
   try {
     const response = await fetch(productsUrl + `/page` + `/${page}`);
     const data = await response.json();
     clear();
-    displayCard(data);
+    if(data){
+      displayCard(data);
+    }
+    hideSpinner();
   } catch (error) {
     console.log(error);
   }
@@ -212,7 +249,7 @@ const displayCartFooter = () => {
   footerCart.innerHTML = "";
   if (Object.keys(cart).length === 0) {
     return (footerCart.innerHTML = `
-        <th scope="row" colspan="5">Carrito vacío con innerHTML</th>
+        <th scope="row" colspan="5">Carrito vacío</th>
         `);
   }
 
