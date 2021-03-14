@@ -46,6 +46,29 @@ svg:hover{
   fill:aqua;
 }
 
+.fa-cart-plus:hover{
+  color: #838BA4;
+}
+
+#tituloProducto{
+  font-size: 1em;
+  padding: 3px;
+  background-color: black;
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#discount {
+  color: aqua;
+  background-color: black;
+  text-align: center;
+  border-radius: 20px;
+}
+.descuentoText{
+  text-align: center;
+}
+
 #loading {
   width: 2rem;
   height: 2rem;

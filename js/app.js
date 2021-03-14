@@ -80,6 +80,7 @@ const fetchProducts = async () => {
   try {
     const response = await fetch(productsUrl);
     const data = await response.json();
+    console.log(data)
     if(data){
       displayCard(data);
       displayPagination(data);
@@ -193,10 +194,11 @@ const displayPagination = (data) => {
 
 const displayCard = (data) => {
   data.data.map((producto) => {
-    templateCard.querySelector("h5").textContent = producto.name;
-    templateCard.querySelector("p").textContent = producto.price;
     templateCard.querySelector("img").setAttribute("src", producto.url_image);
-    templateCard.querySelector(".btn-outline-dark").dataset.id = producto.id;
+    templateCard.querySelector("h5").textContent = producto.name;
+    templateCard.querySelector("p").textContent =  producto.price;
+    templateCard.querySelector("#discount").textContent = producto.discount + " %";
+    templateCard.querySelector(".fa-cart-plus").dataset.id = producto.id;
     const clone = templateCard.cloneNode(true);
     fragment.appendChild(clone);
   });
@@ -204,7 +206,7 @@ const displayCard = (data) => {
 };
 
 const addCart = (e) => {
-  if (e.target.classList.contains("btn-outline-dark")) {
+  if (e.target.classList.contains("fa-cart-plus")) {
     setCart(e.target.parentElement);
   }
   e.stopPropagation();
@@ -212,7 +214,7 @@ const addCart = (e) => {
 
 const setCart = (obj) => {
   const product = {
-    id: obj.querySelector(".btn-outline-dark").dataset.id,
+    id: obj.querySelector(".fa-cart-plus").dataset.id,
     name: obj.querySelector("h5").textContent,
     price: obj.querySelector("p").textContent,
     cant: 1,
